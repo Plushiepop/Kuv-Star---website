@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUV STAR</title>
+    <link rel="icon" href="blue star.png" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+        }
+        nav {
+            background-color: transparent; /* Make background transparent */
+            border-right: none; /* Remove border */
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            width: 200px;
+        }
+        nav ul {
+            list-style: none;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #262626;
+            font-weight: bold;
+        }
+        nav ul li a img {
+            width: 24px;
+            height: 24px;
+        }
+        .container {
+            max-width: 935px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+            margin-left: 450px; /* Adjust margin to make space for the sidebar */
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .profile-header div {
+            flex-grow: 1;
+        }
+        .profile-header h1 {
+            font-size: 19px;
+            margin-bottom: 4px; /* Add space below the h1 */
+        }
+        .profile-header p {
+            color: #262626; /* Change color to make text no longer faint */
+            margin-bottom: 6px; /* Add space below each p */
+        }
+        .story-highlights {
+            display: flex;
+            overflow-x: auto;
+            margin: 20px 0; /* Add margin-top and margin-bottom */
+        }
+        .story-highlights .highlight {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            text-align: center;
+        }
+        .story-highlights .highlight img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #dbdbdb;
+            cursor: pointer;
+        }
+        .story-highlights .highlight p {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #262626;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            border-bottom: 1px solid #dbdbdb;
+        }
+        .tabs a {
+            text-decoration: none;
+            color: #262626;
+            padding: 10px 0;
+            font-weight: bold;
+        }
+        .tabs a.active {
+            border-bottom: 2px solid #262626;
+        }
+        .gallery, .magazine, .ambassadors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px; /* Add margin-top to create space */
+        }
+        .gallery-item, .magazine-item, .ambassador-item {
+            flex: 1 1 calc(33.333% - 10px);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        .gallery-item img, .magazine-item img, .ambassador-item img {
+            width: 100%;
+            height: 100%; /* Reset height */
+            object-fit: contain;
+            cursor: pointer;
+        }
+        .gallery-item .likes-count, .ambassador-item .likes-count {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            display: none;
+        }
+        .gallery-item:hover .likes-count, .ambassador-item:hover .likes-count {
+            display: block;
+        }
+        .social-links {
+            position: absolute;
+            bottom: 65px;
+            left: 20px;
+        }
+        .social-links ul {
+            list-style: none;
+        }
+        .social-links ul li {
+            margin-bottom: 10px;
+        }
+        .social-links ul li a img {
+            width: 19px;
+            height: 19px;
+            transition: transform 0.3s;
+        }
+        .social-links ul li a:hover img {
+            transform: scale(1.2); /* Scale up the icon on hover */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+        }
+        .modal img {
+            width: 100%;
+            height: auto;
+        }
+        .modal .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .modal .description {
+            margin-top: 10px;
+        }
+        .magazine {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px; /* Add margin-top to create space */
+        }
+        .magazine-item {
+            flex: 1 1 calc(33.333% - 10px);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        .magazine-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            nav {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #dbdbdb;
+            }
+            .container {
+                margin-left: 0;
+                padding: 10px;
+            }
+            .tabs {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .gallery-item, .magazine-item, .ambassador-item {
+                flex: 1 1 calc(33.333% - 10px); /* Adjust to fit 3 photos in a row */
+            }
+        }
+        @media (max-width: 480px) {
+            nav {
+                display: none; /* Hide the sidebar on mobile */
+            }
+            .container {
+                margin-left: 0;
+                padding: 10px;
+            }
+            .tabs {
+                flex-direction: row;
+                justify-content: space-around;
+                border-bottom: 1px solid #dbdbdb;
+                margin-bottom: 10px;
+            }
+            .tabs a {
+                flex: 1;
+                text-align: center;
+                padding: 10px 0;
+                font-size: 14px;
+            }
+            .gallery-item, .magazine-item, .ambassador-item {
+                flex: 1 1 calc(33.333% - 5px); /* Adjust to fit 3 photos in a row */
+                margin-bottom: 5px;
+            }
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .profile-header img {
+                margin-bottom: 10px;
+            }
+            .profile-header h1 {
+                font-size: 16px;
+            }
+            .profile-header p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSeRGegJWH8Gyda2M3B011XTq4iZh1_gBZQofXkD5ubyQ383Xw/viewform?usp=sf_link" target="_blank">Apps</a></li>
+        </ul>
+        <div class="social-links">
+            <ul>
+                <li><a href="https://www.youtube.com/@KUVSTAR_Official" target="_blank"><img src="youtube.png" alt="YouTube"></a></li>
+                <li><a href="https://www.tiktok.com/@plushboutique_official" target="_blank"><img src="tik-tok.png" alt="TikTok"></a></li>
+                <li><a href="https://discord.gg/kae5vJkBX3" target="_blank"><img src="discord.png" alt="Discord"></a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="profile-header">
+            <img src="Starship Studios - Artboard 6.png" alt="Profile Picture" width="120" height="120">
+            <div>
+                <h1>KUV STAR</h1>
+                <p>We have the passion for fashion</p>
+                <p>Modeling & Fashion</p>
+            </div>
+        </div> 
+        <div class="story-highlights">
+            <div class="highlight">
+                <img src="ezgif.com-animated-gif-maker.gif" alt="Glow up highlight">
+                <p>Glow Up Ver.1</p>
+            </div>
+            <!-- Add more highlights as needed -->
+        </div>
+        <div class="tabs">
+            <a href="#posts" class="active">Posts</a>
+            <a href="#magazine">Collections</a>
+            <a href="#ambassadors">Ambassadors</a>
+        </div>
+        <div id="posts" class="gallery">
+            <div class="gallery-item">
+                <img src="7.png" alt="Let's glow up together">
+                <div class="likes-count">500 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="Desirable.png" alt="The new era of kuv star has arrived">
+                <div class="likes-count">120 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="6.png" alt="We rise . We grow . We glow #kuvstar #glowup">
+                <div class="likes-count">100 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="glow up bg 1.png" alt="KUV STAR Glow up">
+                <div class="likes-count">150 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="glow up tease.png" alt="KUV STAR Glow up coming">
+                <div class="likes-count">200 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="glow up bg 1.png" alt="KUV STAR Glow up">
+                <div class="likes-count">250 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="Plush Boutique 3.png" alt="A day at the picnic with the girls">
+                <div class="likes-count">300 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="Plush Boutique 2.png" alt="The lighting was so good we coundn't resist">
+                <div class="likes-count">350 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="Plush Boutique.png" alt="Girls picnic #kuvstar #picnic">
+                <div class="likes-count">400 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="3.png" alt="Angelic Desire [Collection]">
+                <div class="likes-count">450 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="4.png" alt="Angelic Desire [Collection]">
+                <div class="likes-count">500 likes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="5.png" alt="Angelic Desire [Collection]">
+                <div class="likes-count">550 likes</div>
+            </div>
+            <!-- Add more photos as needed -->
+        </div>
+        <div id="magazine" class="magazine" style="display: none;">
+            <div class="magazine-item">
+                <a href="magazine1.pdf" target="_blank"><img src="magazine1.jpg" alt=""></a>
+            </div>
+            <div class="magazine-item">
+                <a href="magazine2.pdf" target="_blank"><img src="Guess what thumbnail.jpg.png" alt=""></a>
+            </div>
+            <div class="magazine-item">
+                <a href="https://youtu.be/HdoCNGmYKEw?si=nzX3Gg4A7oOj_c9C" target="_blank"><img src="wait.png" alt="Magazine 3"></a>
+            </div>
+            <!-- Add more magazine links as needed -->
+        </div>
+        <div id="ambassadors" class="ambassadors" style="display: none;">
+            <div class="ambassador-item">
+                <img src="ambassador1.jpg" alt="">
+                <div class="likes-count">600 likes</div>
+            </div>
+            <div class="ambassador-item">
+                <img src="ambassador2.jpg" alt="">
+                <div class="likes-count">650 likes</div>
+            </div>
+            <div class="ambassador-item">
+                <img src="ambassador3.jpg" alt="">
+                <div class="likes-count">700 likes</div>
+            </div>
+            <!-- Add more ambassador images as needed -->
+        </div>
+    </div>
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img src="" alt="">
+            <div class="description"></div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.tabs a').forEach(tab => {
+            tab.addEventListener('click', function(event) {
+                event.preventDefault();
+                document.querySelectorAll('.tabs a').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.gallery, .magazine, .ambassadors').forEach(container => container.style.display = 'none');
+                document.querySelector(tab.getAttribute('href')).style.display = 'flex';
+            });
+        });
+
+        const modal = document.getElementById('imageModal');
+        const modalImg = modal.querySelector('img');
+        const modalDescription = modal.querySelector('.description');
+        const closeModal = modal.querySelector('.close');
+
+        document.querySelectorAll('.gallery img, .ambassador-item img').forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = 'flex';
+                modalImg.src = this.src;
+                modalDescription.textContent = this.alt;
+            });
+        });
+
+        document.querySelectorAll('.story-highlights .highlight img').forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = 'flex';
+                modalImg.src = this.src;
+                modalDescription.textContent = this.alt;
+            });
+        });
+
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
